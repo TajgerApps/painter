@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ 'Catalog directories list'|trans }}:
+    <ul>
+        {% if finder.hasResults() %}
+            <li></li>
+        {% endif %}
+    </ul>
+{% endblock %}
