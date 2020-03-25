@@ -1,10 +1,57 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {{ 'Catalog directories list'|trans }}:
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addDirectoryModal"> {{ 'Add directory'|trans }} </button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addImageModal"> {{ 'Add image'|trans }} </button>
+    <br/>
+    {{ 'Catalog directories list in catalog'|trans }} /{{ path }}:
     <ul>
-        {% if finder.hasResults() %}
-            <li></li>
+        {% if directoryData %}
+            {% for directory in directoryData %}
+                <li><a href="{{ path('catalog_path', {'path': directory.encodedPath}) }}">{{ directory.name }}</a></li>
+            {% endfor %}
         {% endif %}
     </ul>
+
+    <!-- Modals -->
+    <div class="modal fade" id="addDirectoryModal" tabindex="-1" role="dialog" aria-labelledby="addDirectoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDirectoryModalLabel">{{ 'Add directory'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ 'Directory name'|trans }} <input type="text" id="addDirectoryModalInput">
+                    <input type="hidden" id="addDirectoryModalInputCurrentPath" value="{{ path }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"> {{ 'Close'|trans }} </button>
+                    <button type="button" id="addDirectory" class="btn btn-primary"> {{ 'Add directory'|trans }} </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addImageModal" tabindex="-1" role="dialog" aria-labelledby="addImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addImageModalLabel">{{ 'Add image'|trans }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ 'Image file'|trans }} <input type="file">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"> {{ 'Close'|trans }} </button>
+                    <button id="addImage" type="button" class="btn btn-primary"> {{ 'Add image'|trans }} </button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

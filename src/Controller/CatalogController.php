@@ -16,25 +16,35 @@ class CatalogController extends AbstractController
 
     public function index(Request $request): Response
     {
-        $path = $request->query->get('path', null);
+        $path = $request->attributes->get('_route_params')['path']??'';
         $finder = new Finder();
         $finder->in(self::dataDirectory . DIRECTORY_SEPARATOR . $path);
+        $dirData = [];
+        foreach ($finder as $file) {
+            $dirData[] = [
+                'name' => $file->getFilename(),
+                'encodedPath' => rawurlencode($file->getRelativePath()),
+            ];
+        }
         return $this->render('catalog/index.html.twig', [
-            'finder' => $finder,
+            'directoryData' => $dirData,
+            'path' => $path,
         ]);
+
     }
 
     public function addDirectory(Request $request): JsonResponse
     {
-        $path = $request->query->get('path', null);
-        if (is_null($path)) {
+        $dirname = $request->request->get('dirname', null);
+        $currentPath = $request->request->get('currentPath', '');
+        if (is_null($dirname)) {
             return new JsonResponse('Wrong data');
         }
         $filesystem = new Filesystem();
-        if (!$filesystem->exists(self::dataDirectory . DIRECTORY_SEPARATOR . $path)) {
-            $filesystem->mkdir(self::dataDirectory . DIRECTORY_SEPARATOR . $path);
-            return new JsonResponse('ok');
+        if (!$filesystem->exists(self::dataDirectory . DIRECTORY_SEPARATOR . $currentPath . DIRECTORY_SEPARATOR . $dirname)) {
+            $filesystem->mkdir(self::dataDirectory . DIRECTORY_SEPARATOR . $currentPath . DIRECTORY_SEPARATOR . $dirname);
+            return new JsonResponse('Ok');
         }
-        return new Response('Directory exists');
+        return new JsonResponse('Directory exists');
     }
 }
